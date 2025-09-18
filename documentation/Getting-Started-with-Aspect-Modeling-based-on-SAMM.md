@@ -43,7 +43,8 @@ As explained above, we want to come up with the aspect model for the Movement As
 
 **SAMM**
 
-The aspect models that we are going to write, are based on the elements defined in the [Semantic Aspect Meta Model](https://openmanufacturingplatform.github.io/sds-documentation/bamm-specification/snapshot/meta-model-elements.html) . For this guide no prior knowledge of SAMM and its elements is required as the intention of this guide is to introduce the most relevant concepts and elements defined in SAMM. However, if you want to know more details, we recommend that you consult the [SAMM documentation](https://openmanufacturingplatform.github.io/sds-documentation/bamm-specification/snapshot/meta-model-elements.html). The following graphic gives an overview of the main elements in SAMM:
+The aspect models that we are going to write, are based on the elements defined in the [Semantic Aspect Meta Model](https://eclipse-esmf.github.io/samm-specification/snapshot/meta-model-elements.html). 
+For this guide no prior knowledge of SAMM and its elements is required as the intention of this guide is to introduce the most relevant concepts and elements defined in SAMM. However, if you want to know more details, we recommend that you consult the [SAMM documentation](https://eclipse-esmf.github.io/samm-specification/snapshot/meta-model-elements.html). The following graphic gives an overview of the main elements in SAMM:
 
 
 ![image](https://openmanufacturingplatform.github.io/sds-documentation/bamm-specification/snapshot/_images/aspect-meta-model.svg)
@@ -74,7 +75,7 @@ For the modeling you can use any text editor like for example VS Code, Notepad, 
 
 Let's see what is happening here. The Turtle files start with the definition of a couple of prefixes defining shortcuts for several URNs. For instance, :Movement then actually translates urn:bamm:com.catenax:0.0.1#Movement as the : is a placeholder for the actual urn (in our case <urn:bamm.com.catenax:0.0.1#> . This way we can also reference the elements defined in SAMM (prefix bamm, prefix unit, prefix bamm-c, or prefix bamm-e). These prefixes are known and can be resolved by to the tooling around SAMM mentioned below. 
 
-The definition of the actual Aspect starts in line 9 by stating: ":Movement a bamm:Aspect". This defines that the Movement is an Aspect element defined in SAMM. An Aspect element is the entry point of each aspect model. The next lines adds additional information on the Aspect. For more details on the different fields one can check the [documentation of an Aspect](https://openmanufacturingplatform.github.io/sds-documentation/bamm-specification/snapshot/modeling-guidelines.html) . 
+The definition of the actual Aspect starts in line 9 by stating: ":Movement a bamm:Aspect". This defines that the Movement is an Aspect element defined in SAMM. An Aspect element is the entry point of each aspect model. The next lines adds additional information on the Aspect. For more details on the different fields one can check the [documentation of an Aspect](https://eclipse-esmf.github.io/samm-specification/snapshot/appendix/best-practices.html) . 
 
 The bamm:name is the name of the aspect and should only contain alphabetic or numeric characters and no whitespaces. The reason is that this name may be used as a property name in a programming code that gets generated based on the aspect model. Next, there are the "preferredName" and the "description". Both fields are intended to be interpreted by humans and may be used in user interfaces and similar systems and should be human-readable. For internationalization, it is possible to state them in multiple languages which are then identified by the tag after the `@`sign. In general, we advise you to at least state the English version and then add other languages whenever required. 
 
@@ -105,7 +106,7 @@ As we can see in the excerpt, the structure for defining a Property has many sim
 
 An important point here is that the property only indicates the existence of a value, but does not define how the expected value type looks like. In SAMM this is separated into another model element, namely the Characteristic. This is the reason why the Property has a field bamm:characteristic to reference to the type information defined in a Characteristic. 
 
-As explained above, our domain expert told us that :isMoving is of type Boolean. As this is a more easy and generic data type it has already been defined in SAMM and we can simply reuse and reference it by writing bamm-c:Boolean. Under bamm-c, one can reference several characteristics and types of Characteristics. For more details check the [documentation on Characteristics](https://openmanufacturingplatform.github.io/sds-documentation/bamm-specification/snapshot/characteristics.html).
+As explained above, our domain expert told us that :isMoving is of type Boolean. As this is a more easy and generic data type it has already been defined in SAMM and we can simply reuse and reference it by writing bamm-c:Boolean. Under bamm-c, one can reference several characteristics and types of Characteristics. For more details check the [documentation on Characteristics](https://eclipse-esmf.github.io/samm-specification/snapshot/characteristics.html).
 
 For the :speedLimitWarning we need to define our own :speedLimitWarningCharacteristic because it is specific to our Aspect model:
 
@@ -121,7 +122,7 @@ For the :speedLimitWarning we need to define our own :speedLimitWarningCharacter
 
 The most generic way of defining a Characteristic would have been to write ":speedLimitWarningCharacteristic a bamm:Characteristic" . But we already know that the value of our speed limit warning will come from a list of predefined possible values. In SAMM there is already the special Characteristic called Enumeration for the cases where you can state the possible values. This is also the reason for writing "bamm-c:Enumeration" and not "bamm:Enumeration" as in the "bamm:Property", "bamm:Aspect", or "bamm:Characteristic". 
 
-For the Enumeration, we need to define the basic dataType which in our case is String. More details on possible data type or how to define a custom data Type with an Entity is available under [Data Types in the SAMM documentation](https://openmanufacturingplatform.github.io/sds-documentation/bamm-specification/snapshot/datatypes.html). In :bamm-c:values we then give a list with the possible values. 
+For the Enumeration, we need to define the basic dataType which in our case is String. More details on possible data type or how to define a custom data Type with an Entity is available under [Data Types in the SAMM documentation](https://eclipse-esmf.github.io/samm-specification/snapshot/datatypes.html). In :samm-c:values we then give a list with the possible values. 
 
 This already concludes the basic definition of the Aspect model for the Movement Aspect. Here is the complete model for reference which you could also copy to your editor (e.g., when starting to work with the SAMM CLI):
 
@@ -129,42 +130,111 @@ This already concludes the basic definition of the Aspect model for the Movement
 
 **Movement.ttl (complete)**
 
-```
-@prefix : <urn:bamm:com.catenaX:0.0.1#>.
-@prefix bamm: <urn:bamm:io.openmanufacturing:meta-model:1.0.0#>.
-@prefix unit: <urn:bamm:io.openmanufacturing:unit:1.0.0#>.
-@prefix bamm-c: <urn:bamm:io.openmanufacturing:characteristic:1.0.0#>.
-@prefix bamm-e: <urn:bamm:io.openmanufacturing:entity:1.0.0#>.
-@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+# Copyright (c) 2024 Robert Bosch Manufacturing Solutions GmbH
+#
+# See the AUTHORS file(s) distributed with this work for
+# additional information regarding authorship.
+#
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+#
+# SPDX-License-Identifier: MPL-2.0
+
+@prefix samm: <urn:samm:org.eclipse.esmf.samm:meta-model:2.1.0#> .
+@prefix samm-c: <urn:samm:org.eclipse.esmf.samm:characteristic:2.1.0#> .
+@prefix samm-e: <urn:samm:org.eclipse.esmf.samm:entity:2.1.0#> .
+@prefix unit: <urn:samm:org.eclipse.esmf.samm:unit:2.1.0#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
- 
-:Movement a bamm:Aspect ;
-   bamm:name "Movement" ;
-   bamm:preferredName "Movement"@en ;
-   bamm:description "Aspect for movement information"@en ;
-   bamm:properties ( :isMoving :speedLimitWarning) ;
-   bamm:operations ( ) .
- 
-:isMoving a bamm:Property ;
-   bamm:name "moving" ;
-   bamm:preferredName "moving"@en ;
-   bamm:description "Flag indicating if the position is changing"@en ;
-   bamm:characteristic bamm-c:Boolean .
- 
- 
-:speedLimitWarning a bamm:Property ;
-   bamm:name "speedLimitWarning" ;
-   bamm:preferredName "speedLimitWarning"@en ;
-   bamm:description "An indicator for the warning regarding the speed limit"@en ;
-   bamm:characteristic :speedLimitWarningCharacteristic .
- 
- 
-:speedLimitWarningCharacteristic a bamm-c:Enumeration;   
-    bamm:name "speedLimitWarningCharacteristic"@en;
-    bamm:description "Possible values for a speed limit warning, with the following meaning: green - under speed limit, yellow - at speed limit, red - over speed limit."@en;
-    bamm:dataType xsd:string;
-    bamm-c:values ("green" "yellow" "red") .
-```
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <urn:samm:org.eclipse.examples:1.0.0#> .
+
+:Movement a samm:Aspect ;
+   samm:preferredName "movement"@en ;
+   samm:description "Aspect for movement information"@en ;
+   samm:properties ( :isMoving :position :speed :speedLimitWarning ) ;
+   samm:operations ( ) ;
+   samm:events ( ) .
+
+:isMoving a samm:Property ;
+   samm:preferredName "is moving"@en ;
+   samm:description "Flag indicating whether the asset is currently moving"@en ;
+   samm:characteristic samm-c:Boolean .
+
+:position a samm:Property ;
+   samm:preferredName "position"@en ;
+   samm:description "Indicates a position"@en ;
+   samm:characteristic :SpatialPositionCharacteristic .
+
+:speed a samm:Property ;
+   samm:preferredName "speed"@en ;
+   samm:description "speed of vehicle"@en ;
+   samm:characteristic :Speed .
+
+:speedLimitWarning a samm:Property ;
+   samm:preferredName "speed limit warning"@en ;
+   samm:description "Indicates if the speed limit is adhered to."@en ;
+   samm:characteristic :TrafficLight .
+
+:SpatialPositionCharacteristic a samm-c:SingleEntity ;
+   samm:preferredName "spatial position characteristic"@en ;
+   samm:description "Represents a single position in space with optional z coordinate."@en ;
+   samm:dataType :SpatialPosition .
+
+:Speed a samm-c:Measurement ;
+   samm:preferredName "speed"@en ;
+   samm:description "Scalar representation of speed of an object in kilometers per hour."@en ;
+   samm:dataType xsd:float ;
+   samm-c:unit unit:kilometrePerHour .
+
+:TrafficLight a samm-c:Enumeration ;
+   samm:preferredName "warning level"@en ;
+   samm:description "Represents if speed of position change is within specification (green), within tolerance (yellow), or outside specification (red)."@en ;
+   samm:dataType xsd:string ;
+   samm-c:values ( "green" "yellow" "red" ) .
+
+:SpatialPosition a samm:Entity ;
+   samm:preferredName "spatial position"@en ;
+   samm:description "Represents latitude, longitude and altitude information in the WGS84 geodetic reference datum"@en ;
+   samm:see <https://www.w3.org/2003/01/geo/> ;
+   samm:properties ( :latitude :longitude [ samm:property :altitude; samm:optional true ] ) .
+
+:latitude a samm:Property ;
+   samm:preferredName "latitude"@en ;
+   samm:description "latitude coordinate in space (WGS84)"@en ;
+   samm:see <http://www.w3.org/2003/01/geo/wgs84_pos#lat> ;
+   samm:characteristic :Coordinate ;
+   samm:exampleValue "9.1781"^^xsd:decimal .
+
+:longitude a samm:Property ;
+   samm:preferredName "longitude"@en ;
+   samm:description "longitude coordinate in space (WGS84)"@en ;
+   samm:see <http://www.w3.org/2003/01/geo/wgs84_pos#long> ;
+   samm:characteristic :Coordinate ;
+   samm:exampleValue "48.80835"^^xsd:decimal .
+
+:altitude a samm:Property ;
+   samm:preferredName "altitude"@en ;
+   samm:description "Elevation above sea level zero"@en ;
+   samm:see <http://www.w3.org/2003/01/geo/wgs84_pos#alt> ;
+   samm:characteristic :MetresAboveMeanSeaLevel ;
+   samm:exampleValue "153"^^xsd:float .
+
+:Coordinate a samm-c:Measurement ;
+   samm:preferredName "coordinate"@en ;
+   samm:description "Representing the geographical coordinate"@en ;
+   samm:dataType xsd:decimal ;
+   samm-c:unit unit:degreeUnitOfAngle .
+
+:MetresAboveMeanSeaLevel a samm-c:Measurement ;
+   samm:preferredName "metres above mean sea level"@en ;
+   samm:description "Signifies the vertical distance in reference to a historic mean sea level as a vertical datum"@en ;
+   samm:see <https://en.wikipedia.org/wiki/Height_above_sea_level> ;
+   samm:dataType xsd:float ;
+   samm-c:unit unit:metre .
+
 
 
 **Tooling & SAMM CLI:**
